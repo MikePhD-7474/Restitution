@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Church Platform</title>
+  <link rel="stylesheet" href="../src/styles.css">
+</head>
+<body>
+  <div id="loginScreen" class="screen">
+    <form id="loginForm" class="card login-card" autocomplete="on">
+      <h1>Church Platform</h1>
+      <p class="muted">Sign in with your church account</p>
+
+      <label for="loginEmail">Email</label>
+      <input id="loginEmail" name="email" type="email" required autocomplete="email">
+
+      <label for="loginPassword">Password</label>
+      <input id="loginPassword" name="password" type="password" required autocomplete="current-password">
+
+      <button type="submit" class="primary">Sign In</button>
+      <p id="loginStatus" class="status"></p>
+    </form>
+  </div>
+
+  <div id="appShell" class="hidden">
+    <header class="header">
+      <div>
+        <h2>Church Platform</h2>
+        <p id="churchLabel" class="muted">Church</p>
+      </div>
+      <div class="header-meta">
+        <span id="userName" class="pill">User</span>
+        <span id="userRole" class="pill">viewer</span>
+        <button id="logoutBtn" class="ghost">Logout</button>
+      </div>
+    </header>
+
+    <nav id="mainNav" class="tabs">
+      <button class="tab-button active" data-tab="dashboard">Dashboard</button>
+      <button class="tab-button" data-tab="members">Members</button>
+      <button class="tab-button" data-tab="attendance">Attendance</button>
+      <button class="tab-button" data-tab="finance">Finance</button>
+      <button class="tab-button" data-tab="projects">Projects</button>
+      <button class="tab-button" data-tab="portal">Member Portal</button>
+    </nav>
+
+    <main class="container">
+      <section id="dashboard-tab" class="tab-panel active">
+        <h3>Dashboard</h3>
+        <div class="metric-grid">
+          <article class="metric-card">
+            <p>Total Members</p>
+            <h4 id="dashMembersCount">0</h4>
+          </article>
+          <article class="metric-card">
+            <p>Attendance Today</p>
+            <h4 id="dashAttendanceToday">0</h4>
+          </article>
+          <article class="metric-card">
+            <p>Monthly Giving</p>
+            <h4 id="dashMonthlyGiving">ZMW 0.00</h4>
+          </article>
+          <article class="metric-card">
+            <p>Projects Progress</p>
+            <h4 id="dashProjectsProgress">0%</h4>
+          </article>
+        </div>
+
+        <div class="grid-2">
+          <article class="card">
+            <h4>Giving Trend (Last 6 Months)</h4>
+            <canvas id="monthlyGivingChart" height="120"></canvas>
+          </article>
+          <article class="card">
+            <h4>Upcoming Events</h4>
+            <ul id="upcomingEventsList" class="list"></ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="members-tab" class="tab-panel">
+        <h3>Members</h3>
+        <article class="card">
+          <form id="memberForm" class="form-grid">
+            <fieldset>
+              <input name="name" placeholder="Full name" required>
+              <select name="gender">
+                <option value="">Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+              <input name="phone" placeholder="Phone" required>
+              <input name="email" placeholder="Email" type="email">
+              <input name="address" placeholder="Address">
+              <input name="baptismDate" type="date" placeholder="Baptism Date">
+              <input name="membershipDate" type="date" required>
+              <input name="department" placeholder="Department">
+              <select name="status">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+              <button type="submit" class="primary">Add Member</button>
+            </fieldset>
+          </form>
+          <p id="membersStatus" class="status"></p>
+        </article>
+
+        <article class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Department</th>
+                  <th>Status</th>
+                  <th>Membership Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="membersTbody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section id="attendance-tab" class="tab-panel">
+        <h3>Attendance</h3>
+        <article class="card">
+          <form id="attendanceForm" class="form-grid">
+            <fieldset>
+              <select name="memberId" id="attendanceMember" required>
+                <option value="">Select Member</option>
+              </select>
+              <select name="service" required>
+                <option value="">Service</option>
+                <option value="Sunday Service">Sunday Service</option>
+                <option value="Prayer Meeting">Prayer Meeting</option>
+                <option value="Bible Study">Bible Study</option>
+              </select>
+              <input name="date" type="date" required>
+              <input name="eventId" placeholder="Event ID (optional)">
+              <button type="submit" class="primary">Record Attendance</button>
+            </fieldset>
+          </form>
+          <p id="attendanceStatus" class="status"></p>
+        </article>
+
+        <article class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Service</th>
+                  <th>Member</th>
+                  <th>Recorded By</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceTbody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section id="finance-tab" class="tab-panel">
+        <h3>Finance</h3>
+        <div class="metric-grid">
+          <article class="metric-card">
+            <p>Total Giving</p>
+            <h4 id="finTotalGiving">ZMW 0.00</h4>
+          </article>
+          <article class="metric-card">
+            <p>Total Expenses</p>
+            <h4 id="finTotalExpenses">ZMW 0.00</h4>
+          </article>
+          <article class="metric-card">
+            <p>Net Balance</p>
+            <h4 id="finNetBalance">ZMW 0.00</h4>
+          </article>
+        </div>
+
+        <div class="grid-2">
+          <article class="card">
+            <h4>Record Giving</h4>
+            <form id="givingForm" class="form-grid">
+              <fieldset>
+                <select name="memberId" id="givingMember" required>
+                  <option value="">Select Member</option>
+                </select>
+                <select name="type" required>
+                  <option value="tithe">Tithe</option>
+                  <option value="offering">Offering</option>
+                  <option value="missions">Missions</option>
+                  <option value="building fund">Building Fund</option>
+                  <option value="special">Special</option>
+                </select>
+                <select name="method" required>
+                  <option value="cash">Cash</option>
+                  <option value="mobile money">Mobile Money</option>
+                  <option value="bank">Bank</option>
+                </select>
+                <input name="amount" type="number" step="0.01" min="0" required placeholder="Amount">
+                <input name="date" type="date" required>
+                <button type="submit" class="primary">Save Giving</button>
+              </fieldset>
+            </form>
+          </article>
+
+          <article class="card">
+            <h4>Record Expense</h4>
+            <form id="expenseForm" class="form-grid">
+              <fieldset>
+                <input name="title" required placeholder="Expense title">
+                <input name="category" required placeholder="Category">
+                <input name="approvedBy" placeholder="Approved by">
+                <input name="amount" type="number" step="0.01" min="0" required placeholder="Amount">
+                <input name="date" type="date" required>
+                <button type="submit" class="primary">Save Expense</button>
+              </fieldset>
+            </form>
+          </article>
+        </div>
+
+        <p id="financeStatus" class="status"></p>
+
+        <div class="grid-2">
+          <article class="card">
+            <h4>Giving Records</h4>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Member</th>
+                    <th>Type</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="givingTbody"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="card">
+            <h4>Expense Records</h4>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Approved By</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="expenseTbody"></tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="projects-tab" class="tab-panel">
+        <h3>Projects</h3>
+        <article class="card">
+          <form id="projectForm" class="form-grid">
+            <fieldset>
+              <input name="title" placeholder="Project title" required>
+              <input name="startDate" type="date" required>
+              <input name="endDate" type="date" required>
+              <input name="budget" type="number" min="0" step="0.01" required placeholder="Budget">
+              <input name="spent" type="number" min="0" step="0.01" value="0" placeholder="Spent">
+              <select name="status">
+                <option value="not-started">Not Started</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+              <button type="submit" class="primary">Save Project</button>
+            </fieldset>
+          </form>
+          <p id="projectsStatus" class="status"></p>
+        </article>
+
+        <article class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Status</th>
+                  <th>Dates</th>
+                  <th>Budget</th>
+                  <th>Spent</th>
+                  <th>Progress</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="projectsTbody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section id="portal-tab" class="tab-panel">
+        <h3>Member Portal</h3>
+        <article class="card">
+          <p id="portalWelcome">Welcome.</p>
+        </article>
+
+        <div class="grid-2">
+          <article class="card">
+            <h4>My Giving History</h4>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="portalGivingTbody"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="card">
+            <h4>Church Events</h4>
+            <ul id="portalEventsList" class="list"></ul>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./firebase-config.js"></script>
+  <script type="module" src="../src/app.js"></script>
+</body>
+</html>
